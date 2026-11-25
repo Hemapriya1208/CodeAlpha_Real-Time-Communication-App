@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ConnectSpace</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+
+<!-- ================= AUTH PAGE ================= -->
+
+<section id="authPage" class="auth-page">
+
+    <div class="auth-left">
+
+        <div class="brand">
+            <div class="brand-icon">C</div>
+            <span>ConnectSpace</span>
+        </div>
+
+        <div class="hero-content">
+            <h1>Connect.<br>Collaborate.<br>Communicate.</h1>
+
+            <p>
+                A simple real-time communication platform
+                for video meetings, chat, file sharing and collaboration.
+            </p>
+
+            <div class="features">
+                <div>🎥 HD Video Meetings</div>
+                <div>💬 Real-Time Chat</div>
+                <div>📁 File Sharing</div>
+                <div>🖥️ Screen Sharing</div>
+                <div>🎨 Collaborative Whiteboard</div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="auth-right">
+
+        <div class="auth-card">
+
+            <div class="mobile-brand">
+                <div class="brand-icon">C</div>
+                <span>ConnectSpace</span>
+            </div>
+
+            <div class="auth-tabs">
+
+                <button
+                    id="loginTab"
+                    class="auth-tab active"
+                    onclick="showLogin()">
+                    Login
+                </button>
+
+                <button
+                    id="registerTab"
+                    class="auth-tab"
+                    onclick="showRegister()">
+                    Register
+                </button>
+
+            </div>
+
+
+            <!-- LOGIN -->
+
+            <div id="loginForm">
+
+                <h2>Welcome back</h2>
+
+                <p class="form-subtitle">
+                    Login to continue to your workspace
+                </p>
+
+                <div class="form-group">
+                    <label>Email</label>
+
+                    <input
+                        id="loginEmail"
+                        type="email"
+                        placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+
+                    <input
+                        id="loginPassword"
+                        type="password"
+                        placeholder="Enter your password">
+                </div>
+
+                <button
+                    class="primary-btn"
+                    onclick="login()">
+                    Login
+                </button>
+
+                <p id="loginMessage" class="message"></p>
+
+                <p class="switch-text">
+                    Don't have an account?
+                    <span onclick="showRegister()">Create one</span>
+                </p>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <div id="registerForm" class="hidden">
+
+                <h2>Create account</h2>
+
+                <p class="form-subtitle">
+                    Join ConnectSpace today
+                </p>
+
+                <div class="form-group">
+                    <label>Full Name</label>
+
+                    <input
+                        id="registerName"
+                        type="text"
+                        placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+
+                    <input
+                        id="registerEmail"
+                        type="email"
+                        placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+
+                    <input
+                        id="registerPassword"
+                        type="password"
+                        placeholder="Minimum 6 characters">
+                </div>
+
+                <button
+                    class="primary-btn"
+                    onclick="register()">
+                    Create Account
+                </button>
+
+                <p id="registerMessage" class="message"></p>
+
+                <p class="switch-text">
+                    Already have an account?
+                    <span onclick="showLogin()">Login</span>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<section id="dashboard" class="dashboard hidden">
+
+    <header class="dashboard-header">
+
+        <div class="brand">
+            <div class="brand-icon">C</div>
+            <span>ConnectSpace</span>
+        </div>
+
+        <div class="user-section">
+
+            <div class="user-info">
+                <div id="userAvatar" class="avatar">U</div>
+
+                <div>
+                    <strong id="dashboardUserName">User</strong>
+                    <small id="dashboardUserEmail"></small>
+                </div>
+            </div>
+
+            <button
+                class="logout-btn"
+                onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main class="dashboard-main">
+
+        <div class="welcome">
+
+            <div>
+                <p class="small-label">YOUR WORKSPACE</p>
+
+                <h1>
+                    Welcome,
+                    <span id="welcomeName">User</span> 👋
+                </h1>
+
+                <p>
+                    Start a meeting or join your team's room.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="meeting-actions">
+
+            <div class="action-card">
+
+                <div class="action-icon create-icon">
+                    +
+                </div>
+
+                <h2>Create a Meeting</h2>
+
+                <p>
+                    Create a new room and invite others.
+                </p>
+
+                <button
+                    class="primary-btn"
+                    onclick="createMeeting()">
+                    Create Meeting
+                </button>
+
+            </div>
+
+
+            <div class="action-card">
+
+                <div class="action-icon join-icon">
+                    →
+                </div>
+
+                <h2>Join a Meeting</h2>
+
+                <p>
+                    Enter a room ID to join an existing meeting.
+                </p>
+
+                <div class="join-input">
+
+                    <input
+                        id="roomInput"
+                        type="text"
+                        placeholder="Enter Room ID">
+
+                    <button
+                        class="primary-btn"
+                        onclick="joinMeeting()">
+                        Join
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="info-section">
+
+            <div>
+                <h3>Everything you need</h3>
+
+                <p>
+                    Video calls, chat, file sharing,
+                    screen sharing and collaborative whiteboard
+                    in one place.
+                </p>
+            </div>
+
+            <div class="mini-features">
+                <span>🎥 Video</span>
+                <span>💬 Chat</span>
+                <span>📁 Files</span>
+                <span>🖥️ Screen</span>
+                <span>🎨 Whiteboard</span>
+            </div>
+
+        </div>
+
+    </main>
+
+</section>
+
+
+<!-- ================= MEETING PAGE ================= -->
+
+<section id="meetingPage" class="meeting-page hidden">
+
+    <header class="meeting-header">
+
+        <div class="meeting-brand">
+
+            <div class="brand-icon">C</div>
+
+            <div>
+                <strong>ConnectSpace</strong>
+
+                <span>
+                    Room:
+                    <b id="currentRoom">---</b>
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="meeting-actions-top">
+
+            <button
+                class="copy-btn"
+                onclick="copyRoomId()">
+                📋 Copy Room ID
+            </button>
+
+            <button
+                class="leave-btn"
+                onclick="leaveMeeting()">
+                Leave Meeting
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <div class="meeting-layout">
+
+
+        <!-- VIDEO AREA -->
+
+        <main class="video-section">
+
+            <div
+                id="videoGrid"
+                class="video-grid">
+            </div>
+
+
+            <div class="controls">
+
+                <button
+                    id="micBtn"
+                    class="control-btn"
+                    onclick="toggleMic()">
+                    🎤
+                </button>
+
+                <button
+                    id="cameraBtn"
+                    class="control-btn"
+                    onclick="toggleCamera()">
+                    📹
+                </button>
+
+                <button
+                    id="screenBtn"
+                    class="control-btn"
+                    onclick="toggleScreenShare()">
+                    🖥️
+                </button>
+
+                <button
+                    class="control-btn board-control"
+                    onclick="toggleWhiteboard()">
+                    🎨
+                </button>
+
+                <button
+                    class="control-btn danger"
+                    onclick="leaveMeeting()">
+                    📞
+                </button>
+
+            </div>
+
+        </main>
+
+
+        <!-- RIGHT SIDEBAR -->
+
+        <aside class="sidebar">
+
+
+            <!-- CHAT -->
+
+            <div class="chat-panel">
+
+                <div class="panel-title">
+                    <span>💬 Chat</span>
+                    <span id="onlineCount">Online</span>
+                </div>
+
+
+                <div
+                    id="messages"
+                    class="messages">
+                </div>
+
+
+                <div class="chat-input">
+
+                    <input
+                        id="messageInput"
+                        type="text"
+                        placeholder="Type a message..."
+                        onkeydown="handleMessageKey(event)">
+
+                    <button onclick="sendMessage()">
+                        ➤
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- FILE SHARING -->
+
+            <div class="file-panel">
+
+                <div class="panel-title">
+                    <span>📁 Files</span>
+                </div>
+
+                <label class="file-upload">
+
+                    <input
+                        id="fileInput"
+                        type="file"
+                        onchange="uploadFile()">
+
+                    <span>
+                        + Share a file
+                    </span>
+
+                </label>
+
+                <div id="fileList"></div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    <!-- WHITEBOARD -->
+
+    <div
+        id="whiteboardPanel"
+        class="whiteboard-panel hidden">
+
+        <div class="whiteboard-header">
+
+            <strong>🎨 Collaborative Whiteboard</strong>
+
+            <button onclick="toggleWhiteboard()">
+                ✕
+            </button>
+
+        </div>
+
+        <canvas id="whiteboard"></canvas>
+
+    </div>
+
+</section>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
